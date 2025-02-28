@@ -5,7 +5,10 @@ import spacy
 import matplotlib.pyplot as plt
 
 # Load NLP model
-nlp = spacy.load("en_core_web_sm")
+try:
+    nlp = spacy.load("en_core_web_sm")
+except OSError:
+    st.error("The 'en_core_web_sm' model is not installed. Please install it using the command: python -m spacy download en_core_web_sm")
 
 st.title("🧾 AI Powered Resume Analyzer")
 
@@ -35,7 +38,7 @@ if uploaded_file:
     elif file_type == "docx":
         resume_text = extract_text_from_docx(uploaded_file)
     else:
-        st.error("Unsupported file format")
+        st.error("Unsupported file format. Please upload a PDF or DOCX file.")
 
     st.subheader("Extracted Resume Text: ")
     st.write(resume_text[:1000])  # Show only first 1000 characters
@@ -57,9 +60,16 @@ if job_description and resume_text:
     job_keywords = extract_keywords(job_description)
 
     st.subheader("🔍 Resume vs Job Description Keywords")
-    st.write("📄 Resume Keywords:", ", ".join(resume_keywords))
-    st.write("💼 Job Description Keywords:", ", ".join(job_keywords))
-    
+    if resume_keywords:
+        st.write("📄 Resume Keywords:", ", ".join(resume_keywords))
+    else:
+        st.write("📄 No keywords found in the resume.")
+
+    if job_keywords:
+        st.write("💼 Job Description Keywords:", ", ".join(job_keywords))
+    else:
+        st.write("💼 No keywords found in the job description.")
+
     # Calculate match score 
     if job_keywords:  # Avoid division by zero
         match_score = len(resume_keywords & job_keywords) / len(job_keywords) * 100
