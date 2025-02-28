@@ -5,6 +5,7 @@ import spacy
 import matplotlib.pyplot as plt
 
 # Load NLP model
+model_name = "en_core_web_sm"
 try:
     nlp = spacy.load("en_core_web_sm")
 except OSError:
